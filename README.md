@@ -95,3 +95,9 @@ The application includes comprehensive error handling for:
 - Built with the Perplexity API
 - Uses OpenAI's API client structure
 - Async support through asyncio
+
+## pdocs
+
+```bash
+poetry run pdoc --output-dir docs questions 
+```
