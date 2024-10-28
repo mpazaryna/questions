@@ -122,7 +122,7 @@ def get_config(log_to_file: bool = False) -> ConfigTuple:
     """
     return ConfigTuple(
         perplexity_api_key=load_env_vars(),
-        output_dir=Path("data/output/questions"),
+        output_dir=Path("results"),
         log_file="app.log",
         log_to_file=log_to_file,
         model_name="llama-3.1-sonar-large-128k-online",
