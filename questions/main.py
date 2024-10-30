@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, NamedTuple, Tuple
 
 from dotenv import load_dotenv
+from langchain.prompts import PromptTemplate
 from openai import OpenAI
 
 from .animation_utils import create_progress_animation
@@ -30,7 +31,9 @@ from .io_utils import (
     get_user_choice,
     get_user_question,
 )
-from .prompt_utils import get_prompt
+
+# from .prompt_utils import get_prompt
+from .prompts import local_prompts  # Import the local prompts directly
 
 
 @dataclass
@@ -143,7 +146,46 @@ def create_openai_client(config: ConfigTuple) -> OpenAI:
     return OpenAI(api_key=config.perplexity_api_key, base_url=config.base_url)
 
 
+def load_prompts(prompts_file: Path) -> Dict[str, PromptTemplate]:
+    """Load prompt templates from local file"""
+    namespace = {}
+    exec(prompts_file.read_text(), namespace)
+    return namespace.get("local_prompts", {})
+
+
+def get_prompt(expert_type: str, prompts: Dict[str, PromptTemplate]) -> str:
+    """Get formatted prompt for expert type"""
+    template = prompts.get(expert_type)
+    if not template:
+        raise ValueError(f"No prompt template found for expert type: {expert_type}")
+    return template.format()
+
+
 async def generate_related_questions(
+    context: QuestionProcessingContext,
+    prompts: Dict[str, PromptTemplate],
+) -> List[str]:
+    """Generate related questions based on user input"""
+    expert_prompt = get_prompt(context.expert_type, prompts)
+
+    messages = [
+        {"role": "system", "content": expert_prompt},
+        {"role": "user", "content": context.question},
+    ]
+
+    response = context.client.chat.completions.create(
+        model=context.config.model_name,
+        messages=messages,
+    )
+
+    return [
+        q.strip()
+        for q in response.choices[0].message.content.split("\n")
+        if q.strip() and any(q.strip().startswith(str(i)) for i in range(1, 6))
+    ]
+
+
+async def deprecated_generate_related_questions(
     context: QuestionProcessingContext,
     prompt_getter: Callable[[str], str] = get_prompt,
 ) -> List[str]:
@@ -223,7 +265,7 @@ async def process_questions(
     return await asyncio.gather(*tasks)
 
 
-async def process_single_question(context: QuestionProcessingContext):
+async def process_single_question(context: QuestionProcessingContext, prompts):
     """
     Process a single question through the Q&A pipeline.
 
@@ -234,7 +276,7 @@ async def process_single_question(context: QuestionProcessingContext):
     try:
         # Generate related questions
         task = context.start_animation("Generating related questions")
-        related_questions = await generate_related_questions(context)
+        related_questions = await generate_related_questions(context, prompts)
         context.stop_animation(task, len("Generating related questions"))
 
         # Process all questions
@@ -277,7 +319,7 @@ async def pipeline(question: str, expert_type: str, config: ConfigTuple):
         stop_animation=stop_animation,
     )
 
-    await process_single_question(context)
+    await process_single_question(context, local_prompts)
 
     print("\nThank you for using the Q&A Assistant!")
 
@@ -295,6 +337,8 @@ async def main(question: str = None, expert_type: str = None, log_to_file: bool 
         if log_to_file is None:
             log_to_file = input("Log to file? (yes/no): ").strip().lower() == "yes"
 
+        # Use the imported local prompts directly
+        prompts = local_prompts
         config = get_config(log_to_file)
 
         if question is None:
