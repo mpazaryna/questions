@@ -25,13 +25,8 @@ from openai import OpenAI
 from .animation_utils import create_progress_animation
 from .config import ConfigTuple
 from .file_utils import save_results
-from .io_utils import (
-    display_results,
-    get_expert_type,
-    get_user_choice,
-    get_user_question,
-)
-
+from .io_utils import (display_results, get_expert_type, get_user_choice,
+                       get_user_question)
 # from .prompt_utils import get_prompt
 from .prompts import local_prompts  # Import the local prompts directly
 
