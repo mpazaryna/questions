@@ -9,7 +9,7 @@ from questions.main import main
 @pytest.mark.asyncio
 async def test_main_integration():
     # Define test inputs
-    question = "What are the benefits of a senior developer using AI to generate solutions as a freelance consultant?"
+    question = "Why does AI make a single freelance consultant more valuable than a team of freelancers?"
     expert_type = "business consultant"
     log_to_file = False  # Change to True if you want to log to a file
 

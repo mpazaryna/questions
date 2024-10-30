@@ -74,6 +74,7 @@ class QuestionProcessingContext:
         config (ConfigTuple): Configuration settings for the application
         start_animation (Callable): Function to start the progress animation
         stop_animation (Callable): Function to stop the progress animation
+        prompts (Dict[str, PromptTemplate]): Prompt templates for generating related questions
 
     Example:
         context = QuestionProcessingContext(
@@ -82,7 +83,8 @@ class QuestionProcessingContext:
             expert_type="tax expert",
             config=config,
             start_animation=animation_start_fn,
-            stop_animation=animation_stop_fn
+            stop_animation=animation_stop_fn,
+            prompts=local_prompts
         )
         await process_single_question(context)
     """
@@ -93,6 +95,7 @@ class QuestionProcessingContext:
     config: ConfigTuple
     start_animation: Callable
     stop_animation: Callable
+    prompts: Dict[str, PromptTemplate]
 
 
 def load_env_vars() -> str:
@@ -317,6 +320,7 @@ async def pipeline(question: str, expert_type: str, config: ConfigTuple):
         config=config,
         start_animation=start_animation,
         stop_animation=stop_animation,
+        prompts=local_prompts,
     )
 
     await process_single_question(context, local_prompts)
