@@ -1,6 +1,3 @@
-import asyncio
-import logging
-
 import pytest
 
 from questions.main import main
@@ -14,8 +11,8 @@ async def test_main_integration():
     log_to_file = False  # Change to True if you want to log to a file
 
     # Set up logging to capture output for verification
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger()
+    # logging.basicConfig(level=logging.INFO)
+    # logger = logging.getLogger()
 
     # Run the main function with the test inputs
     await main(question=question, expert_type=expert_type, log_to_file=log_to_file)

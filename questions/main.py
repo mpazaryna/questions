@@ -7,11 +7,8 @@ comprehensive insights into the user's financial query.
 """
 
 import asyncio
-import json
 import logging
 import os
-import sys
-import time
 from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
@@ -25,10 +22,8 @@ from openai import OpenAI
 from .animation_utils import create_progress_animation
 from .config import ConfigTuple
 from .file_utils import save_results
-from .io_utils import (display_results, get_expert_type, get_user_choice,
-                       get_user_question)
-# from .prompt_utils import get_prompt
-from .prompts import local_prompts  # Import the local prompts directly
+from .io_utils import display_results, get_expert_type, get_user_question
+from .prompts import local_prompts
 
 
 @dataclass
@@ -336,8 +331,6 @@ async def main(question: str = None, expert_type: str = None, log_to_file: bool 
         if log_to_file is None:
             log_to_file = input("Log to file? (yes/no): ").strip().lower() == "yes"
 
-        # Use the imported local prompts directly
-        prompts = local_prompts
         config = get_config(log_to_file)
 
         if question is None:
