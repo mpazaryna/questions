@@ -29,10 +29,24 @@ business_consultant_prompt = PromptTemplate.from_template(
     "only the questions as a numbered list."
 )
 
+mill_research_prompt = PromptTemplate.from_template(
+    "As a textile industry analyst researching independent US fabric mills, generate 2 related questions "
+    "that would help evaluate. Consider factors like: "
+    "- Production capacity and specialty materials/techniques "
+    "- Supply chain relationships (both upstream suppliers and downstream customers) "
+    "- Regional manufacturing advantages/challenges "
+    "- Sustainability practices and certifications "
+    "- Labor force stability and skilled worker availability "
+    "- Equipment modernization and technical capabilities "
+    "Return only the questions as a numbered list, focusing on aspects that would reveal "
+    "the mill's competitive position and operational sustainability."
+)
+
 # Dictionary to hold all prompts
 local_prompts = {
     "financial advisor": financial_advisor_prompt,
     "tax expert": tax_expert_prompt,
     "investment analyst": investment_analyst_prompt,
     "business consultant": business_consultant_prompt,
+    "mill research": mill_research_prompt,
 }

@@ -6,8 +6,8 @@ from questions.main import main
 @pytest.mark.asyncio
 async def test_main_integration():
     # Define test inputs
-    question = "Why does AI make a single freelance consultant more valuable than a team of freelancers?"
-    expert_type = "business consultant"
+    question = "Tell me more about Miliken Mills the fabric industry leader?"
+    expert_type = "investment analyst"
     log_to_file = False  # Change to True if you want to log to a file
 
     # Set up logging to capture output for verification
